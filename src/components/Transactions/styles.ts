@@ -3,7 +3,7 @@ import { FlatList } from "react-native"
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize"
 import { getBottomSpace } from "react-native-iphone-x-helper"
 
-import { TransactionDataList } from "."
+import { Transaction } from "../../services/hooks/useTransactions"
 
 export const Container = styled.View`
   flex: 1;
@@ -20,7 +20,7 @@ export const Title = styled.Text`
 `
 
 export const TransactionsList = styled(
-  FlatList as new () => FlatList<TransactionDataList>,
+  FlatList as new () => FlatList<Transaction>,
 ).attrs({
   showsVerticalScrollIndicator: false,
   contentContainerStyle: {

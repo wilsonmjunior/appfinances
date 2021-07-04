@@ -23,7 +23,7 @@ export const Amount = styled.Text<AmountProps>`
   font-size: ${RFValue(20)}px;
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme, type }) =>
-    type === 'positive' ? theme.colors.success : theme.colors.atention
+    type === 'up' ? theme.colors.success : theme.colors.atention
   };
 
   margin-top: 2px;

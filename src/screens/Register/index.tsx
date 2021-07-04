@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Keyboard,
@@ -7,9 +7,12 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 import { useForm } from 'react-hook-form';
+import { useNavigation } from '@react-navigation/native';
+import uuid from 'react-native-uuid'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup';
 
+import { Transaction, useTransactions } from '../../services/hooks/useTransactions';
 import { InputForm, Button, TransactionTypeButton } from '../../components/Form'
 import { Select } from '../../components/Form/Select';
 import { SelectCategory } from '../SelectCategory'
@@ -22,13 +25,6 @@ import {
   Fields,
   TransactionsTypes,
 } from './styles';
-
-interface FormData {
-  name: string
-  amount: string
-  transactionType: string
-  category: string
-}
 
 const schema = Yup.object().shape({
   name: Yup.string().required('Nome é obrigatório'),
@@ -50,10 +46,15 @@ export function Register() {
     handleSubmit,
     formState: {
       errors
-    }
+    },
+    reset
   } = useForm({
     resolver: yupResolver(schema)
   })
+
+  const navigation = useNavigation()
+
+  const { save } = useTransactions()
 
   async function handleSelectedTransactionType(type: 'up' | 'down') {
     setTransactionType(type)
@@ -67,7 +68,7 @@ export function Register() {
     setCategoryModalOpen(true)
   }
 
-  function handleRegister(form: FormData) {
+  async function handleRegister(form: Transaction) {
     if (!transactionType) {
       return Alert.alert('Selecione o tipo da transação')
     }
@@ -77,13 +78,24 @@ export function Register() {
     }
 
     const data = {
+      id: String(uuid.v4()),
+      type: transactionType,
       name: form.name,
       amount: form.amount,
       category: category.key,
-      transactionType
-    } as FormData
+      date: new Date().toISOString(),
+    } as Transaction
 
-    console.warn(data);
+    await save(data);
+
+    setTransactionType('')
+    setCategory({
+      key: 'category',
+      name: 'Category',
+    })
+    reset()
+
+    navigation.navigate('Listagem')
   }
 
   return (

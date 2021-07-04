@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useMemo } from 'react'
+import { categories } from '../../data/categories'
 
+import { Transaction } from '../../services/hooks/useTransactions'
 import {
   Container,
   Title,
@@ -11,45 +13,34 @@ import {
   Date,
 } from './styles'
 
-interface Category {
-  name: string
-  icon: string
-}
-
-export interface TransactionData {
-  type: 'positive' | 'negative'
-  title: string
-  amount: string
-  category: Category
-  date: string
-}
-
 interface Props {
-  data: TransactionData
+  data: Transaction
 }
 
 export function TransactionCard({
   data: {
     type,
-    title,
+    name,
     amount,
     category,
     date
   }
 }: Props) {
+  const categoryFormatted = useMemo(() => categories.find(item => item.key === category), [])
+
   return (
     <Container>
-      <Title>{title}</Title>
+      <Title>{name}</Title>
 
       <Amount type={type}>
-        {type === "negative" && '- '}
+        {type === "down" && '- '}
         {amount}
       </Amount>
 
       <Footer>
         <Category>
-          <Icon name={category.icon} />
-          <CategoryName>{category.name}</CategoryName>
+          <Icon name={categoryFormatted?.icon} />
+          <CategoryName>{categoryFormatted?.name}</CategoryName>
         </Category>
 
         <Date>{date}</Date>
