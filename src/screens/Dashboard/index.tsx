@@ -3,7 +3,7 @@ import React from 'react';
 import { Transactions } from '../../components/Transactions';
 import { HighlightCards } from '../../components/HighlightCards';
 
-import { Header } from './Header'
+import { Header } from '../../components/Header'
 
 import * as S from './styles'
 

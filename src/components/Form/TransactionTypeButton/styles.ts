@@ -2,7 +2,6 @@ import { TouchableOpacity } from 'react-native';
 import styled, { css } from 'styled-components/native';
 import { Feather } from '@expo/vector-icons'
 import { RFValue } from 'react-native-responsive-fontsize';
-import { color } from 'react-native-reanimated';
 
 interface TypeProps {
   type: 'up' | 'down'

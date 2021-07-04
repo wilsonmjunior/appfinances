@@ -1,5 +1,4 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
 
 import * as S from './styles'
 
@@ -17,9 +16,9 @@ export function Header() {
 
         </S.UserInfo>
 
-        <TouchableOpacity onPress={() => console.warn("Touch")}>
+        <S.LogoutButton onPress={() => console.warn("Touch")}>
           <S.Icon name="power" />
-        </TouchableOpacity>
+        </S.LogoutButton>
       </S.UserWrapper>
     </S.Container>
   )
