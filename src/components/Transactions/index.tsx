@@ -11,7 +11,6 @@ export function Transactions() {
 
   const loadTransaction = async function () {
     const response = await getTransactions()
-    console.warn('bundell', response);
 
     const transactionsFormatted = response.map(transaction => ({
       ...transaction,
