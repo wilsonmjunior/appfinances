@@ -6,6 +6,12 @@ export const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.background};
 `
 
+export const ContainerLoading = styled.View`
+  align-items: center;
+  justify-content: center;
+  margin-top: ${RFPercentage(10)}px;
+`
+
 export const HighlightCardsContainer = styled.ScrollView.attrs({
   horizontal: true,
   showsHorizontalScrollIndicator: false,

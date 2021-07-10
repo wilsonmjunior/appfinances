@@ -1,27 +1,34 @@
 import React from 'react'
 
+import { ResumeTransactions } from '../../services/hooks/useTransactions'
+
 import { HighlightCard } from '../HighlightCard'
 
-export function HighlightCards() {
+interface Props {
+  data: ResumeTransactions
+}
+
+export function HighlightCards({ data }: Props) {
+
   return (
     <>
       <HighlightCard
         type="up"
         title="Entradas"
-        amount="R$ 20.000,00"
-        lastTransaction="Última entrada dia 13 de abril"
+        amount={data.income.amount}
+        lastTransaction={`Última entrada dia ${data?.income.lastDate}`}
       />
       <HighlightCard
         type="down"
         title="Saídas"
-        amount="R$ 1.200,00"
-        lastTransaction="Ültima saída dia 04 de abril"
+        amount={data.outcome.amount}
+        lastTransaction={`Última saída dia ${data?.outcome.lastDate}`}
       />
       <HighlightCard
         type="total"
         title="Total"
-        amount="R$ 16.143,00"
-        lastTransaction="01 àa 16 de abril"
+        amount={data.total.amount}
+        lastTransaction={data.total.lastDate}
       />
     </>
   )
