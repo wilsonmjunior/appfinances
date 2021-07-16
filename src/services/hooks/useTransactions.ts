@@ -55,8 +55,7 @@ export function useTransactions() {
 
   async function getResumeTransactions(): Promise<ResumeTransactions> {
     const transactions = await getTransactions()
-
-    if (transactions) {
+    if (transactions.length > 0) {
       const resume = transactions.reduce((accumulator, transaction) => {
         if (transaction.type === "up") {
           accumulator.income = accumulator.income + Number(transaction.amount)
@@ -97,17 +96,17 @@ export function useTransactions() {
       return {
         income: {
           amount: resume.income.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-          lastDate: Intl.DateTimeFormat('pt-BR', {
+          lastDate: higherDateIncome ? Intl.DateTimeFormat('pt-BR', {
             month: 'long',
             day: 'numeric'
-          }).format(new Date(higherDateIncome)) || '',
+          }).format(new Date(higherDateIncome)) : '',
         },
         outcome: {
           amount: resume.outcome.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-          lastDate: Intl.DateTimeFormat('pt-BR', {
+          lastDate: !higherDateOutcome ? Intl.DateTimeFormat('pt-BR', {
             month: 'long',
             day: 'numeric'
-          }).format(new Date(higherDateOutcome)) || '',
+          }).format(new Date(higherDateOutcome)) : '',
         },
         total: {
           amount: resume.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),

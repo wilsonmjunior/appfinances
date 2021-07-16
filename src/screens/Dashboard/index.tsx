@@ -6,7 +6,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { ResumeTransactions, Transaction, useTransactions } from '../../services/hooks/useTransactions';
 import { Transactions } from '../../components/Transactions';
 import { HighlightCards } from '../../components/HighlightCards';
-import { Header } from '../../components/Header'
+import { Header } from './Header'
 
 import * as S from './styles'
 
@@ -34,6 +34,7 @@ export function Dashboard() {
     setTransactions(transactionsFormatted)
 
     const resume = await getResumeTransactions()
+
     setResumeTransactions(resume)
 
     setLoading(false)
@@ -57,9 +58,13 @@ export function Dashboard() {
           </S.ContainerLoading>
         ) : (
           <>
-            <S.HighlightCardsContainer>
-              <HighlightCards data={resumeTransactions} />
-            </S.HighlightCardsContainer>
+            {
+              Object.keys(resumeTransactions).length > 0 && (
+                <S.HighlightCardsContainer>
+                  <HighlightCards data={resumeTransactions} />
+                </S.HighlightCardsContainer>
+              )
+            }
 
             <Transactions data={transactions} />
           </>

@@ -1,18 +1,21 @@
 import React, { ReactNode } from 'react';
 
-import { Text } from 'react-native';
+import Header from '../../components/Header';
+import HistoryCard from '../../components/HistoryCard';
 
-import { Container } from './styles';
+import { Container, Content } from './styles';
 
-interface ResumeProps {
-  children: ReactNode;
-}
-
-function Resume({ children }: ResumeProps) {
+function Resume() {
   return (
     <Container>
-      <Text>Resume</Text>
-      {children}
+      <Header title="Resumo" />
+
+      <Content>
+        <HistoryCard color="#5636D3" title="Casa" amount="R$ 100,00" />
+        <HistoryCard color="#FF872C" title="Carro" amount="R$ 100,00" />
+        <HistoryCard color="#12A454" title="Alimentação" amount="R$ 100,00" />
+        <HistoryCard color="#E83F5B" title="Alimentação" amount="R$ 100,00" />
+      </Content>
     </Container>
   );
 };

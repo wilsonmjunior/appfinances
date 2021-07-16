@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   Keyboard,
@@ -15,12 +15,11 @@ import * as Yup from 'yup';
 import { Transaction, useTransactions } from '../../services/hooks/useTransactions';
 import { InputForm, Button, TransactionTypeButton } from '../../components/Form'
 import { Select } from '../../components/Form/Select';
+import Header from '../../components/Header';
 import { SelectCategory } from '../SelectCategory'
 
 import {
   Container,
-  Header,
-  Title,
   FormContainer,
   Fields,
   TransactionsTypes,
@@ -107,9 +106,7 @@ export function Register() {
         behavior="padding"
       >
         <Container>
-          <Header>
-            <Title>Cadastro</Title>
-          </Header>
+          <Header title="Cadastro" />
 
           <FormContainer>
             <Fields>

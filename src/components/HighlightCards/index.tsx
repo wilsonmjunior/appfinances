@@ -9,7 +9,6 @@ interface Props {
 }
 
 export function HighlightCards({ data }: Props) {
-
   return (
     <>
       <HighlightCard
