@@ -28,6 +28,7 @@ import {
 const schema = Yup.object().shape({
   name: Yup.string().required('Nome é obrigatório'),
   amount: Yup.number()
+    .required('O valor é obrigatório')
     .typeError('Informe um valor numérico')
     .positive('O valor não pode ser negativo')
 })

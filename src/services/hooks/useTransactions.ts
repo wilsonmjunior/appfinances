@@ -1,6 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { Alert } from "react-native"
 
+import { categories } from '../../data/categories'
+
 export interface Transaction {
   id: string
   type: 'up' | 'down'
@@ -23,6 +25,14 @@ export interface ResumeTransactions {
     amount: string
     lastDate: string
   }
+}
+
+export interface Category {
+  key: string
+  name: string
+  color: string
+  total: number
+  percent: string
 }
 
 export function useTransactions() {
@@ -118,9 +128,51 @@ export function useTransactions() {
     return {} as ResumeTransactions
   }
 
+  async function getResumeCategories({ date }: { date?: Date }) {
+    const transactions = await getTransactions()
+    let resumeByCategory: Category[] = []
+    let transactionsFiltered = transactions
+
+    if (date) {
+      transactionsFiltered = transactions.filter(transaction => new Date(transaction.date).getMonth() === date.getMonth())
+    }
+
+    if (transactionsFiltered.length > 0) {
+
+      const total = transactionsFiltered.reduce((accumulator, transaction) => {
+        accumulator = accumulator + Number(transaction.amount)
+        return accumulator
+      }, 0)
+
+      categories.forEach(category => {
+        const sumTotal = transactionsFiltered.reduce((acc, transaction) => {
+          if (transaction.category === category.key) {
+            acc = acc + Number(transaction.amount)
+          }
+
+          return acc
+        }, 0)
+
+        if (sumTotal > 0) {
+          // const total = sumTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+          const percent = `${((sumTotal * 100) / total).toFixed(0)}%`
+
+          resumeByCategory.push({
+            ...category,
+            total: sumTotal,
+            percent,
+          })
+        }
+      })
+    }
+
+    return resumeByCategory
+  }
+
   return {
     save,
     getTransactions,
-    getResumeTransactions
+    getResumeTransactions,
+    getResumeCategories
   }
 }
