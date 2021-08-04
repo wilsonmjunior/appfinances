@@ -1,6 +1,12 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react'
-import * as AuthSession from 'expo-auth-session'
+import React, { createContext, ReactNode, useEffect, useContext, useState } from 'react'
 import { Alert } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
+import * as AuthSession from 'expo-auth-session'
+import * as AppleAuthentication from 'expo-apple-authentication'
+
+const { CLIENT_ID } = process.env
+const { REDIRECT_URI } = process.env
 
 interface User {
   id: string
@@ -18,7 +24,9 @@ interface AuthResponse {
 
 interface AuthContextData {
   user: User
+  userStorageLoading: boolean
   signInWithGoogle(): Promise<void>
+  signInWithApple(): Promise<void>
 }
 
 interface AuthProviderProps {
@@ -29,11 +37,10 @@ const AuthContext = createContext({} as AuthContextData)
 
 function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>({} as User)
+  const [userStorageLoading, setUserStorageLoading] = useState(true)
 
   async function signInWithGoogle() {
     try {
-      const CLIENT_ID = "497049902499-hn1eai6td71ardr3affph58bf01n11g9.apps.googleusercontent.com"
-      const REDIRECT_URI = "https://auth.expo.io/@wilsonmjuniorx/appgofinances"
       const RESPONSE_TYPE = "token"
       const SCOPE = encodeURI("profile email")
 
@@ -47,12 +54,15 @@ function AuthProvider({ children }: AuthProviderProps) {
         const response = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${params.access_token}`)
         const userInfo = await response.json()
 
-        setUser({
+        const userLogged = {
           id: userInfo.id,
           email: userInfo.email,
           name: userInfo.given_name,
           photo: userInfo.picture,
-        })
+        }
+
+        setUser(userLogged)
+        await AsyncStorage.setItem('@GoFinances:user', JSON.stringify(userLogged))
       }
     } catch (error) {
       console.warn('error', error);
@@ -60,8 +70,50 @@ function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  async function signInWithApple() {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+        ]
+      })
+
+      if (credential) {
+        const userLogged = {
+          id: String(credential.user),
+          email: credential.email,
+          name: credential.fullName?.givenName,
+          photo: undefined,
+        } as User
+
+        setUser(userLogged)
+        await AsyncStorage.setItem('@GoFinances:user', JSON.stringify(userLogged))
+      }
+    } catch (error) {
+      console.warn('error', error);
+      Alert.alert('Não foi possivel conectar a conta Apple')
+    }
+  }
+
+  useEffect(() => {
+    async function loadUserStorage() {
+      const userStorage = await AsyncStorage.getItem('@GoFinances:user')
+      if (userStorage) {
+        const userData = JSON.parse(userStorage) as User
+        setUser(userData)
+      }
+
+      setUserStorageLoading(false)
+    }
+
+    if (!user.id) {
+      loadUserStorage()
+    }
+  }, [])
+
   return (
-    <AuthContext.Provider value={{ user, signInWithGoogle }}>
+    <AuthContext.Provider value={{ user, userStorageLoading, signInWithGoogle, signInWithApple }}>
       {children}
     </AuthContext.Provider>
   )

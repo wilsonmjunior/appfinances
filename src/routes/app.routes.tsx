@@ -1,4 +1,5 @@
 import React from "react";
+import { Platform } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather, MaterialIcons } from "@expo/vector-icons"
 import { useTheme } from 'styled-components'
@@ -6,14 +7,10 @@ import { useTheme } from 'styled-components'
 import { Dashboard } from "../screens/Dashboard";
 import { Register } from "../screens/Register";
 import Resume from "../screens/Resume";
-import { View } from "react-native";
-import { Text } from "react-native";
-import { Platform } from "react-native";
 
 const Tab = createBottomTabNavigator()
 
 export function AppRoutes() {
-
   const theme = useTheme()
 
   return (

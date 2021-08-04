@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react'
-import { Text } from 'react-native';
+import React from 'react'
 
 import LogoSvg from '../../assets/logo.svg'
 import AppleSvg from '../../assets/apple.svg'
@@ -8,12 +7,17 @@ import GoogleSvg from '../../assets/google.svg'
 import { Container, Header, TitleWrapper, Title, SignInAccountTitle, Footer, FooterWrapper } from './styles';
 import { SignInSocialButton } from '../../components/SignInSocialButton';
 import { useAuth } from '../../contexts/auth';
+import { ActivityIndicator } from 'react-native';
 
 export function SignIn() {
-  const { user, signInWithGoogle } = useAuth()
+  const { signInWithGoogle, signInWithApple } = useAuth()
 
   async function handleSignInWithGoogle() {
     await signInWithGoogle()
+  }
+
+  async function handleSignInWithApple() {
+    await signInWithApple()
   }
 
   return (
@@ -39,6 +43,7 @@ export function SignIn() {
           <SignInSocialButton
             svg={AppleSvg}
             title="Entrar com Apple"
+            onPress={handleSignInWithApple}
           />
           <SignInSocialButton
             svg={GoogleSvg}

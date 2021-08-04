@@ -24,7 +24,7 @@ export const Title = styled.Text`
   color: ${({ theme }) => theme.colors.shape};
   text-align: center;
 
-  margin-top: 45px;
+  margin: 45px 16px 0;
 `
 
 export const SignInAccountTitle = styled.Text`
