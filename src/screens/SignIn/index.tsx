@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import { ActivityIndicator, Alert } from 'react-native';
+import { ActivityIndicator, Alert, Platform } from 'react-native';
 import { useTheme } from 'styled-components';
 
 import LogoSvg from '../../assets/logo.svg'
@@ -61,11 +61,13 @@ export function SignIn() {
 
       <Footer>
         <FooterWrapper>
-          <SignInSocialButton
-            svg={AppleSvg}
-            title="Entrar com Apple"
-            onPress={handleSignInWithApple}
-          />
+          {Platform.OS === 'ios' && (
+            <SignInSocialButton
+              svg={AppleSvg}
+              title="Entrar com Apple"
+              onPress={handleSignInWithApple}
+            />
+          )}
           <SignInSocialButton
             svg={GoogleSvg}
             title="Entrar com Google"
