@@ -1,5 +1,4 @@
-import React, { createContext, ReactNode, useEffect, useContext, useState } from 'react'
-import { Alert } from 'react-native'
+import React, { createContext, ReactNode, useEffect, useContext, useState, useCallback } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import * as AuthSession from 'expo-auth-session'
@@ -27,6 +26,7 @@ interface AuthContextData {
   userStorageLoading: boolean
   signInWithGoogle(): Promise<void>
   signInWithApple(): Promise<void>
+  signOut(): Promise<void>
 }
 
 interface AuthProviderProps {
@@ -39,7 +39,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>({} as User)
   const [userStorageLoading, setUserStorageLoading] = useState(true)
 
-  async function signInWithGoogle() {
+  const signInWithGoogle = useCallback(async () => {
     try {
       const RESPONSE_TYPE = "token"
       const SCOPE = encodeURI("profile email")
@@ -65,12 +65,11 @@ function AuthProvider({ children }: AuthProviderProps) {
         await AsyncStorage.setItem('@GoFinances:user', JSON.stringify(userLogged))
       }
     } catch (error) {
-      console.warn('error', error);
-      Alert.alert('Não foi possivel conectar a conta Google')
+      throw new Error(error)
     }
-  }
+  }, [])
 
-  async function signInWithApple() {
+  const signInWithApple = useCallback(async () => {
     try {
       const credential = await AppleAuthentication.signInAsync({
         requestedScopes: [
@@ -80,21 +79,28 @@ function AuthProvider({ children }: AuthProviderProps) {
       })
 
       if (credential) {
+        const name = credential.fullName?.givenName
+        const photo = `https://ui-avatars.com/api/?name=${name}&length=1`
+
         const userLogged = {
           id: String(credential.user),
           email: credential.email,
-          name: credential.fullName?.givenName,
-          photo: undefined,
+          name,
+          photo,
         } as User
 
         setUser(userLogged)
         await AsyncStorage.setItem('@GoFinances:user', JSON.stringify(userLogged))
       }
     } catch (error) {
-      console.warn('error', error);
-      Alert.alert('Não foi possivel conectar a conta Apple')
+      throw new Error(error)
     }
-  }
+  }, [])
+
+  const signOut = useCallback(async () => {
+    setUser({} as User)
+    await AsyncStorage.clear()
+  }, [])
 
   useEffect(() => {
     async function loadUserStorage() {
@@ -110,10 +116,10 @@ function AuthProvider({ children }: AuthProviderProps) {
     if (!user.id) {
       loadUserStorage()
     }
-  }, [])
+  }, [user])
 
   return (
-    <AuthContext.Provider value={{ user, userStorageLoading, signInWithGoogle, signInWithApple }}>
+    <AuthContext.Provider value={{ user, userStorageLoading, signInWithGoogle, signInWithApple, signOut }}>
       {children}
     </AuthContext.Provider>
   )

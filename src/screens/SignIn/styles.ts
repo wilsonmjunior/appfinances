@@ -48,3 +48,7 @@ export const FooterWrapper = styled.View`
 
   /* justify-content: space-between; */
 `
+
+export const LoadingWrapper = styled.View`
+  margin-top: 16px;
+`

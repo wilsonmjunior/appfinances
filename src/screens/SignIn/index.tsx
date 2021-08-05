@@ -1,24 +1,45 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
+import { ActivityIndicator, Alert } from 'react-native';
+import { useTheme } from 'styled-components';
 
 import LogoSvg from '../../assets/logo.svg'
 import AppleSvg from '../../assets/apple.svg'
 import GoogleSvg from '../../assets/google.svg'
 
-import { Container, Header, TitleWrapper, Title, SignInAccountTitle, Footer, FooterWrapper } from './styles';
+import { Container, Header, TitleWrapper, Title, SignInAccountTitle, Footer, FooterWrapper, LoadingWrapper } from './styles';
 import { SignInSocialButton } from '../../components/SignInSocialButton';
 import { useAuth } from '../../contexts/auth';
-import { ActivityIndicator } from 'react-native';
 
 export function SignIn() {
   const { signInWithGoogle, signInWithApple } = useAuth()
 
-  async function handleSignInWithGoogle() {
-    await signInWithGoogle()
-  }
+  const theme = useTheme()
 
-  async function handleSignInWithApple() {
-    await signInWithApple()
-  }
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleSignInWithGoogle = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      return await signInWithGoogle()
+    } catch (error) {
+      setIsLoading(false)
+
+      console.warn(error)
+      Alert.alert('Não foi possivel conectar a conta Google')
+    }
+  }, [signInWithGoogle])
+
+  const handleSignInWithApple = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      return await signInWithApple()
+    } catch (error) {
+      setIsLoading(false)
+
+      console.warn(error)
+      Alert.alert('Não foi possivel conectar a conta Apple')
+    }
+  }, [signInWithApple])
 
   return (
     <Container>
@@ -51,6 +72,14 @@ export function SignIn() {
             onPress={handleSignInWithGoogle}
           />
         </FooterWrapper>
+
+        {
+          isLoading && (
+            <LoadingWrapper>
+              <ActivityIndicator size="small" color={theme.colors.shape} />
+            </LoadingWrapper>
+          )
+        }
       </Footer>
     </Container>
   );
