@@ -7,6 +7,7 @@ import { useTheme } from 'styled-components'
 import { Dashboard } from "../screens/Dashboard";
 import { Register } from "../screens/Register";
 import Resume from "../screens/Resume";
+import { Flutter } from "../screens/Flutter";
 
 const Tab = createBottomTabNavigator()
 
@@ -52,6 +53,10 @@ export function AppRoutes() {
             <Feather name="pie-chart" color={color} size={size} />
           )
         }}
+      />
+      <Tab.Screen
+        name="Flutter"
+        component={Flutter}
       />
     </Tab.Navigator>
   )

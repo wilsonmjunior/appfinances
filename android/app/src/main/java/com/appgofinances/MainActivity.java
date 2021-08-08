@@ -1,14 +1,17 @@
 package com.appgofinances;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
+import com.facebook.react.bridge.ReactMethod;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
-import expo.modules.splashscreen.singletons.SplashScreen;
 import expo.modules.splashscreen.SplashScreenImageResizeMode;
+import expo.modules.splashscreen.singletons.SplashScreen;
+import io.flutter.embedding.android.FlutterActivity;
 
 public class MainActivity extends ReactActivity {
   @Override
@@ -16,6 +19,9 @@ public class MainActivity extends ReactActivity {
     super.onCreate(null);
     // SplashScreen.show(...) has to be called after super.onCreate(...)
     // Below line is handled by '@expo/configure-splash-screen' command and it's discouraged to modify it manually
+
+
+
     SplashScreen.show(this, SplashScreenImageResizeMode.CONTAIN, ReactRootView.class, false);
   }
 
@@ -37,5 +43,12 @@ public class MainActivity extends ReactActivity {
                 return new RNGestureHandlerEnabledRootView(MainActivity.this);
             }
         };
+    }
+
+
+    @ReactMethod
+    public void openFlutterActivity() {
+        Intent intent = new Intent(this, FlutterActivity.class);
+        startActivity(intent);
     }
 }

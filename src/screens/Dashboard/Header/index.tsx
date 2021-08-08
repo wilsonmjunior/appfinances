@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useAuth } from '../../../contexts/auth';
 
 import * as S from './styles'
 
 export function Header() {
   const { signOut, user } = useAuth()
+
+  const onPressInit = useCallback(() => {
+    signOut()
+  }, [])
 
   return (
     <S.Container>
@@ -19,7 +23,7 @@ export function Header() {
 
         </S.UserInfo>
 
-        <S.LogoutButton onPress={signOut}>
+        <S.LogoutButton onPress={onPressInit}>
           <S.Icon name="power" />
         </S.LogoutButton>
       </S.UserWrapper>
