@@ -45,7 +45,7 @@ export function AppRoutes() {
           )
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Resume"
         component={Resume}
         options={{
@@ -53,10 +53,15 @@ export function AppRoutes() {
             <Feather name="pie-chart" color={color} size={size} />
           )
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Flutter"
         component={Flutter}
+        options={{
+          tabBarIcon: (({ size, color }) =>
+            <Feather name="pie-chart" color={color} size={size} />
+          )
+        }}
       />
     </Tab.Navigator>
   )

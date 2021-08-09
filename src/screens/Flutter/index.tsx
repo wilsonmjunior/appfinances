@@ -5,11 +5,13 @@ import { Button } from '../../components/Form';
 
 import { ButtonWrapper, Container } from './styles';
 
-const { FlutterActivityModule } = NativeModules
+const { FlutterActivityModule, FlutterModule } = NativeModules
 
 export function Flutter() {
+
   const handleOpenView = useCallback(() => {
     FlutterActivityModule.NavigateToHomeFlutter()
+    // FlutterModule.createCalendarEvent()
   }, [])
 
   return (
