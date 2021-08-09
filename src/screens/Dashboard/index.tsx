@@ -7,6 +7,7 @@ import { ResumeTransactions, Transaction, useTransactions } from '../../services
 import { Transactions } from '../../components/Transactions';
 import { HighlightCards } from '../../components/HighlightCards';
 import { Header } from './Header'
+import { useAuth } from '../../contexts/auth';
 
 import * as S from './styles'
 
@@ -18,8 +19,10 @@ export function Dashboard() {
   const { getTransactions, getResumeTransactions } = useTransactions()
   const theme = useTheme()
 
+  const { user } = useAuth()
+
   const loadTransaction = async function () {
-    const response = await getTransactions()
+    const response = await getTransactions(user.id)
 
     const transactionsFormatted = response.map(transaction => ({
       ...transaction,
@@ -33,7 +36,7 @@ export function Dashboard() {
 
     setTransactions(transactionsFormatted)
 
-    const resume = await getResumeTransactions()
+    const resume = await getResumeTransactions(user.id)
 
     setResumeTransactions(resume)
 

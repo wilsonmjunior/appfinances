@@ -15,11 +15,11 @@ export interface Transaction {
 export interface ResumeTransactions {
   income: {
     amount: string
-    lastDate: string
+    lastTransaction: string
   }
   outcome: {
     amount: string
-    lastDate: string
+    lastTransaction: string
   }
   total: {
     amount: string
@@ -36,9 +36,9 @@ export interface Category {
 }
 
 export function useTransactions() {
-  async function getTransactions(): Promise<Transaction[]> {
+  async function getTransactions(userId: string): Promise<Transaction[]> {
     try {
-      const response = await AsyncStorage.getItem('@GoFinances:transactions')
+      const response = await AsyncStorage.getItem(`@GoFinances:transactions_user:${userId}`)
       if (response) {
         return JSON.parse(response)
       }
@@ -51,20 +51,20 @@ export function useTransactions() {
     }
   }
 
-  async function save(transaction: Transaction) {
+  async function save(transaction: Transaction, userId: string) {
     try {
-      const currentTransactions: Transaction[] = await getTransactions() || []
+      const currentTransactions: Transaction[] = await getTransactions(userId) || []
       const transactions = [...currentTransactions, transaction]
 
-      await AsyncStorage.setItem('@GoFinances:transactions', JSON.stringify(transactions))
+      await AsyncStorage.setItem(`@GoFinances:transactions_user:${userId}`, JSON.stringify(transactions))
     } catch (error) {
       console.error(error)
       Alert.alert('Não foi possivel salvar.')
     }
   }
 
-  async function getResumeTransactions(): Promise<ResumeTransactions> {
-    const transactions = await getTransactions()
+  async function getResumeTransactions(userId: string): Promise<ResumeTransactions> {
+    const transactions = await getTransactions(userId)
     if (transactions.length > 0) {
       const resume = transactions.reduce((accumulator, transaction) => {
         if (transaction.type === "up") {
@@ -103,20 +103,24 @@ export function useTransactions() {
           // ? `${new Date(first.date).getDate()} à ${new Date(last.date).getDate()} de ${new Date(last.date).toLocaleString('pt-BR', { month: 'long' })}`
           : ''
 
+      const lastDateIncome = higherDateIncome > 0 ? Intl.DateTimeFormat('pt-BR', {
+        month: 'long',
+        day: 'numeric'
+      }).format(new Date(higherDateIncome)) : ''
+
+      const lastDateOutcome = higherDateOutcome > 0 ? Intl.DateTimeFormat('pt-BR', {
+        month: 'long',
+        day: 'numeric'
+      }).format(new Date(higherDateOutcome)) : ''
+
       return {
         income: {
           amount: resume.income.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-          lastDate: higherDateIncome ? Intl.DateTimeFormat('pt-BR', {
-            month: 'long',
-            day: 'numeric'
-          }).format(new Date(higherDateIncome)) : '',
+          lastTransaction: higherDateIncome > 0 ? `Última transação dia ${lastDateIncome} ` : 'Não há transações'
         },
         outcome: {
           amount: resume.outcome.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-          lastDate: !higherDateOutcome ? Intl.DateTimeFormat('pt-BR', {
-            month: 'long',
-            day: 'numeric'
-          }).format(new Date(higherDateOutcome)) : '',
+          lastTransaction: higherDateOutcome > 0 ? `Última transação dia ${lastDateOutcome}` : 'Não há transações'
         },
         total: {
           amount: resume.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
@@ -128,8 +132,8 @@ export function useTransactions() {
     return {} as ResumeTransactions
   }
 
-  async function getResumeCategories({ date }: { date?: Date }) {
-    const transactions = await getTransactions()
+  async function getResumeCategories({ date, userId }: { date?: Date, userId: string }) {
+    const transactions = await getTransactions(userId)
     let resumeByCategory: Category[] = []
     let transactionsFiltered = transactions
 

@@ -11,6 +11,7 @@ import { ptBR } from 'date-fns/locale'
 import Header from '../../components/Header'
 import HistoryCard from '../../components/HistoryCard'
 import { Category, useTransactions } from '../../services/hooks/useTransactions'
+import { useAuth } from '../../contexts/auth';
 
 import {
   ChartContainer,
@@ -29,6 +30,8 @@ function Resume() {
   const [resumeCategories, setResumeCategories] = useState<Category[]>([])
 
   const theme = useTheme()
+  const { user } = useAuth()
+
   const { getResumeCategories } = useTransactions()
 
   function handleDateChange(action: 'next' | 'prev'): void {
@@ -42,7 +45,7 @@ function Resume() {
   useFocusEffect(
     useCallback(() => {
       setIsLoading(true)
-      getResumeCategories({ date: selectedDate }).then(response => {
+      getResumeCategories({ date: selectedDate, userId: user.id }).then(response => {
         setResumeCategories(response)
 
         setIsLoading(false)

@@ -17,6 +17,7 @@ import { InputForm, Button, TransactionTypeButton } from '../../components/Form'
 import { Select } from '../../components/Form/Select';
 import Header from '../../components/Header';
 import { SelectCategory } from '../SelectCategory'
+import { useAuth } from '../../contexts/auth';
 
 import {
   Container,
@@ -55,6 +56,7 @@ export function Register() {
   const navigation = useNavigation()
 
   const { save } = useTransactions()
+  const { user } = useAuth()
 
   async function handleSelectedTransactionType(type: 'up' | 'down') {
     setTransactionType(type)
@@ -86,7 +88,7 @@ export function Register() {
       date: new Date().toISOString(),
     } as Transaction
 
-    await save(data);
+    await save(data, user.id);
 
     setTransactionType('')
     setCategory({

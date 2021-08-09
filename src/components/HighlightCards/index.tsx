@@ -15,13 +15,14 @@ export function HighlightCards({ data }: Props) {
         type="up"
         title="Entradas"
         amount={data.income.amount}
-        lastTransaction={`Última entrada dia ${data?.income.lastDate}`}
+        lastTransaction={data.income.lastTransaction}
+
       />
       <HighlightCard
         type="down"
         title="Saídas"
         amount={data.outcome.amount}
-        lastTransaction={`Última saída dia ${data?.outcome.lastDate}`}
+        lastTransaction={data.outcome.lastTransaction}
       />
       <HighlightCard
         type="total"
